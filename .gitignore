@@ -1,0 +1,5 @@
+.env
+*.local.md
+CLAUDE.local.md
+# 実データ（Slack・メール・議事録など）は絶対にコミットしない
+private/
