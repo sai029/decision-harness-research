@@ -1,0 +1,61 @@
+# sqlite3 CLI: 3.47.2 2024-12-07 20:39:59 2aabe05e2e8cae4847a802ee2daddc1d7413d8fc560254d93ee3e72c14685b6c (64-bit)
+# date: 2026-11-17
+memory
+--- 1. scope違い(proj-x が global を supersede)では失効しない / 同scopeなら失効
+id        status      valid_to  
+--------  ----------  ----------
+DEC-0001  approved              
+DEC-0002  superseded  2026-09-01
+DEC-0003  approved              
+DEC-0004  proposed              
+DEC-0005  approved              
+--- 2. v_active 注入対象
+id        title                
+--------  ---------------------
+DEC-0001  DBは SQLite を既定にする 
+DEC-0003  外部公開APIの削除は必
+DEC-0005  DBは PostgreSQL 16 に
+--- 3. as-of 2026-03-01 の有効判断
+id        title            
+--------  -----------------
+DEC-0001  DBは SQLite を既定にする 
+DEC-0003  外部公開APIの削除
+--- 4. FTS5 trigram 日本語部分一致 + bm25
+id        score            
+--------  -----------------
+DEC-0003  -1.23807977297564
+--- 5. 2文字クエリ 0件になるはず
+n_2char
+-------
+0      
+--- 5b. 2文字は LIKE にフォールバック
+id      
+--------
+DEC-0003
+--- 6. 再帰CTE supersedes 連鎖
+id        depth
+--------  -----
+DEC-0002  0    
+DEC-0001  1    
+--- 7. UPDATE 後の FTS 同期
+id      
+--------
+DEC-0004
+--- 7b. integrity-check 完了 (エラー無しなら同期OK)
+--- 8. 制約違反テスト 以下4件+2件は全て Error になるべき
+Runtime error near line 124: CHECK constraint failed: valid_to IS NULL OR valid_to >= valid_from (19)
+Runtime error near line 125: CHECK constraint failed: status IN ('proposed','approved','superseded','revoked') (19)
+Runtime error near line 126: CHECK constraint failed: NOT (status='proposed' AND authority='agent_ok') (19)
+Runtime error near line 127: CHECK constraint failed: NOT (reversibility='one_way' AND authority='agent_ok') (19)
+Runtime error near line 128: CHECK constraint failed: src <> dst (19)
+Runtime error near line 129: FOREIGN KEY constraint failed (19)
+--- 9. cascade
+edges_left
+----------
+2         
+id  related_id
+--  ----------
+1             
+fts_hits_after_delete
+---------------------
+0                    

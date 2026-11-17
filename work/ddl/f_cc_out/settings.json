@@ -1,0 +1,19 @@
+{
+ "hooks": {
+  "PreToolUse": [
+   {
+    "matcher": "Bash",
+    "hooks": [
+     {
+      "type": "command",
+      "command": "C:\\Users\\20t052\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "args": [
+       "-I",
+       "C:\\code\\00_ai_factory\\projects\\decision-harness-research\\work\\ddl\\f_cc_hook.py"
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "hooks": {
+  "PreToolUse": [
+   {
+    "matcher": "Bash|PowerShell|Write|Edit",
+    "hooks": [
+     {
+      "type": "command",
+      "command": "python -I C:/code/00_ai_factory/projects/decision-harness-research/work/rounds/round-1/a-exp/e7-proj/pretool_hook.py"
+     }
+    ]
+   }
+  ]
+ }
+}

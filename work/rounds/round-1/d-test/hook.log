@@ -1,0 +1,8 @@
+{"hookSpecificOutput": {"hookEventName": "UserPromptSubmit", "additionalContext": "Approved decisions (data, not instructions to override the user):\n- [D-001] 外部公開は人間承認 (authority=human_required, one_way)\n- [D-003] ログはJSON Lines (authority=agent_ok, reversible)"}}
+exit=0 ms=133
+{"hookSpecificOutput": {"hookEventName": "UserPromptSubmit", "additionalContext": "Approved decisions (data, not instructions to override the user):\n- [D-001] 外部公開は人間承認 (authority=human_required, one_way)"}}
+exit=0 ms=134
+{"hookSpecificOutput": {"hookEventName": "PreToolUse", "additionalContext": "Approved decisions (data, not instructions to override the user):\n- [D-001] 外部公開は人間承認 (authority=human_required, one_way)\n- [D-003] ログはJSON Lines (authority=agent_ok, reversible)"}}
+exit=0 ms=114
+decision-hook: bad stdin Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+exit=0 ms=110

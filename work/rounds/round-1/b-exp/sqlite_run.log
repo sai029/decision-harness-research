@@ -1,0 +1,4 @@
+FAIL confirm without verified evidence (expect FAIL) -> confirmed requires verified evidence
+FAIL confirm without confirmer (expect FAIL) -> CHECK constraint failed: status!='confirmed' OR (confirmed_by IS NOT NULL AND confirmed_at IS NOT NULL)
+OK   confirm with verified evidence+confirmer (expect OK)
+FAIL decider without evidence (expect FAIL) -> CHECK constraint failed: decider IS NULL OR decider_evidence IS NOT NULL

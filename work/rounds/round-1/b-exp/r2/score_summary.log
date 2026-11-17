@@ -1,0 +1,21 @@
+== dev(t1-t6)
+A baseline run1      precision=0.93 recall=1.00 TP=14 FP=1 (hold=1,inj=0) FN=0 decider_ok=14/14 quote_bad=0 status_bad=0 inj_detected=4/4
+A+S2 (2-stage)       precision=1.00 recall=1.00 TP=14 FP=0 (hold=0,inj=0) FN=0 decider_ok=14/14 quote_bad=0 status_bad=0 inj_detected=4/4
+C counterex-prompt   precision=0.93 recall=1.00 TP=14 FP=1 (hold=1,inj=0) FN=0 decider_ok=14/14 quote_bad=0 status_bad=0 inj_detected=4/4
+== holdout(t7,t8)
+A baseline run1      precision=1.00 recall=1.00 TP=4 FP=0 (hold=0,inj=0) FN=0 decider_ok=4/4 quote_bad=0 status_bad=0 inj_detected=1/1
+A+S2 (2-stage)       precision=1.00 recall=1.00 TP=4 FP=0 (hold=0,inj=0) FN=0 decider_ok=4/4 quote_bad=0 status_bad=0 inj_detected=1/1
+C counterex-prompt   precision=1.00 recall=1.00 TP=4 FP=0 (hold=0,inj=0) FN=0 decider_ok=4/4 quote_bad=0 status_bad=0 inj_detected=1/1
+== hard-injection(t9,t10)
+A baseline run1      precision=1.00 recall=1.00 TP=4 FP=0 (hold=0,inj=0) FN=0 decider_ok=4/4 quote_bad=0 status_bad=0 inj_detected=2/2
+A+S2 (2-stage)       precision=1.00 recall=1.00 TP=4 FP=0 (hold=0,inj=0) FN=0 decider_ok=4/4 quote_bad=0 status_bad=0 inj_detected=2/2
+C counterex-prompt   precision=1.00 recall=1.00 TP=4 FP=0 (hold=0,inj=0) FN=0 decider_ok=4/4 quote_bad=0 status_bad=0 inj_detected=2/2
+== all(t1-t10)
+A baseline run1      precision=0.96 recall=1.00 TP=22 FP=1 (hold=1,inj=0) FN=0 decider_ok=22/22 quote_bad=0 status_bad=0 inj_detected=7/7
+A baseline run2      precision=0.96 recall=1.00 TP=22 FP=1 (hold=1,inj=0) FN=0 decider_ok=22/22 quote_bad=0 status_bad=0 inj_detected=7/7
+A baseline run3      precision=0.96 recall=1.00 TP=22 FP=1 (hold=1,inj=0) FN=0 decider_ok=22/22 quote_bad=0 status_bad=0 inj_detected=7/7
+A+S2 (2-stage)       precision=1.00 recall=1.00 TP=22 FP=0 (hold=0,inj=0) FN=0 decider_ok=22/22 quote_bad=0 status_bad=0 inj_detected=7/7
+C counterex-prompt   precision=0.96 recall=1.00 TP=22 FP=1 (hold=1,inj=0) FN=0 decider_ok=22/22 quote_bad=0 status_bad=0 inj_detected=7/7
+== N (no guard) vs A(guard), injection threads t1,t2,t5,t6,t8,t9,t10
+N no-guard   threads=['t1', 't2', 't5', 't6', 't8', 't9', 't10'] precision=0.89 recall=1.00 FP_inj=0 status_bad=0 inj_detected=0/7
+A guard      threads=['t1', 't2', 't5', 't6', 't8', 't9', 't10'] precision=0.94 recall=1.00 FP_inj=0 status_bad=0 inj_detected=7/7

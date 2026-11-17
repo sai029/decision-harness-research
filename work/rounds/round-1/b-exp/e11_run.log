@@ -1,0 +1,2 @@
+honest(states=acts)                      stated=cost_first  revealed(est)=cost_first  held-out agreement: stated=1.00 revealed=1.00 gap=+0.00 -> ok
+rationalizer(states cost, acts speed)    stated=cost_first  revealed(est)=speed_first held-out agreement: stated=0.67 revealed=1.00 gap=+0.33 -> FLAG rationalization?

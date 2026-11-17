@@ -1,0 +1,13 @@
+cases per decider=12, deciders=2 -> 24 decisions per arm, k=2 runs per cell, unparsed/short runs=0
+arm                   P      Q  pooled  95%CI(bootstrap over 24 cases)
+no_memory         1.000  0.000   0.500  [0.292, 0.708]
+rule_default      0.750  0.250   0.500  [0.292, 0.708]
+shuffled_memory   0.000  0.000   0.000  [0.000, 0.000]
+full_memory       1.000  1.000   1.000  [1.000, 1.000]
+full_memory_noreason  1.000  1.000   1.000  [1.000, 1.000]
+net gain full_memory - max(no_memory, rule_default) [arm-level means]: 0.500  95%CI [0.292, 0.625]
+net gain full_memory_noreason - max(no_memory, rule_default) [arm-level means]: 0.500  95%CI [0.292, 0.625]
+  per-decider net gain P: 0.000 (full 1.00, no_memory 1.00, rule_default 0.75)
+  per-decider net gain Q: 0.750 (full 1.00, no_memory 0.00, rule_default 0.25)
+full - shuffled_memory: 1.000 (shuffled が no_memory(0.50) より低い=他人の記録に引っ張られた)
+retest ceiling: 合成判断者は決定論ルールなので 1.0 (正規化は意味を持たない。実データでは別途測る)

@@ -1,0 +1,1 @@
+{"hook_event_name": "PreToolUse", "tool_name": "Bash", "tool_input": {"command": "git push origin main"}, "session_id": "53516b53-1999-4889-823e-a28a1fc8db63", "agent_id": null, "agent_type": null}

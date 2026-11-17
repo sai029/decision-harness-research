@@ -1,0 +1,11 @@
+B1 step1=yes step3=yes
+B1 queue: [('Q-D-001-370fc23b', 'open', 'park', 'release-owner')]
+B2 step1=yes step3=yes
+B2 queue: [('Q-D-001-370fc23b', 'open', 'park', 'release-owner')]
+B3 step1=yes step3=yes
+B3 queue: [('Q-D-001-370fc23b', 'open', 'park', 'release-owner')]
+A2 step1=yes step3=yes
+A2 queue: [('Q-D-001-370fc23b', 'open', 'park', 'release-owner')]
+A3 step1=yes step3=yes
+A3 queue: [('Q-D-001-370fc23b', 'open', 'park', 'release-owner')]
+A1 (first run) step1=yes step3=no

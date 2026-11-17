@@ -1,0 +1,133 @@
+sqlite 3.39.4 / python 3.11.1 / date 2026-11-17
+DDL OK (unified_schema.sql)
+tables: 25, triggers: 38, views: 8
+seed OK
+
+=== 1. A の既存5検証 (統合スキーマで再現) ===
+PASS approved via Git-proof service
+PASS edit approved text rejected  -> rejected: approved decision is immutable: write a superseding record
+PASS one_way with follow rejected  -> rejected: CHECK constraint failed: reversibility NOT IN ('one_way','unknown') OR agent_mode IN ('ask_async','human_only')
+PASS rejected option w/o reason  -> rejected: CHECK constraint failed: chosen = 1 OR why_not IS NOT NULL
+PASS card too long rejected  -> rejected: CHECK constraint failed: length(card) <= 300
+PASS delete approved rejected  -> rejected: approved decisions are never deleted
+PASS destructive class must be human_only  -> rejected: class floor is human_only
+
+=== 2. E2: 承認の偽造 (INSERT / UPDATE 両経路) ===
+PASS E2-a agent tool boundary: INSERT approval denied by authorizer  -> rejected: not authorized
+PASS E2-b agent INSERT decision with status='approved' (INSERT path)  -> rejected: decision rows can only be inserted as candidate/quarantined; approval is a separate gated step
+PASS E2-c agent UPDATE status='approved' denied by authorizer  -> rejected: not authorized
+PASS E2-d raw writer without verify_proof: fails closed  -> rejected: no such function: verify_proof
+PASS E2-e writer w/o MAC key forges approved_by=boss-a: proof invalid  -> rejected: approval proof invalid
+PASS E2-f direct UPDATE status candidate->approved (no approval row)  -> rejected: status gate: no approval row for this content
+PASS E2-g agent principal as approver even with valid MAC  -> rejected: approver lacks authority in this scope / for required_role
+PASS E2-h human without authority in scope (nobody-e) with valid MAC  -> rejected: approver lacks authority in this scope / for required_role
+PASS E2-i content_hash mismatch (approving other content)  -> rejected: approval content_hash does not match the decision
+PASS E2-j1 commit by agent (own key, not in allowed_signers): service refuses  -> rejected: commit 496a149a has no valid signature from an allowed signer (status=U)
+PASS E2-j2 agent claims senior-b's email but does not sign: service refuses  -> rejected: commit a29e6c26 has no valid signature from an allowed signer (status=N)
+PASS E2-j3 agent claims senior-b's email, signs with the agent's key: service refuses  -> rejected: commit 475ae538 has no valid signature from an allowed signer (status=U)
+PASS E2-k approval rows append-only (UPDATE)  -> rejected: approval rows are append-only
+PASS E2-l approval rows append-only (DELETE)  -> rejected: approval rows are append-only
+PASS E2-m DR-0010 still candidate after all forgeries
+PASS E2-n legit path (signed Git commit by human, service, MAC) -> approved
+      approver_id derived from the verified Git signature: ('senior-b', 'signed_commit', '3aad2b9e')
+
+--- 2b. 証拠条件 (B quote 検証 / F consent・trust_tier) ---
+PASS quote not in body but quote_verified=1 (agent forging flag)  -> rejected: quote_verified=1 but quote is not found in the source body
+PASS agent writer without verify_quote registered? (agent conn has it, wrong quote)  -> rejected: quote_verified=1 but quote is not found in the source body
+PASS raw writer without verify_quote: fails closed  -> rejected: no such function: verify_quote
+PASS approval with only unverified evidence  -> rejected: decider attribution needs verified role=decider evidence
+PASS approval with agent-asserted evidence only  -> rejected: approval needs verified, non-agent, consented, redacted, non-revoked evidence
+PASS approval with consent-withdrawn evidence only  -> rejected: approval needs verified, non-agent, consented, redacted, non-revoked evidence
+PASS approval without verified decider evidence (decided_by set)  -> rejected: decider attribution needs verified role=decider evidence
+PASS approval with verified+consented+human evidence -> approved
+
+--- 2c. 状態遷移 ---
+PASS rejected -> candidate illegal  -> rejected: illegal status transition
+PASS approved -> candidate illegal  -> rejected: illegal status transition
+PASS approved -> quarantined needs revoke approval  -> rejected: status gate: no revoke approval row
+PASS approved -> expired before valid_until  -> rejected: status gate: valid_until has not passed
+PASS valid_until extension rejected  -> rejected: valid_until may only be shortened after approval
+PASS approved -> expired after valid_until passed
+PASS approved -> revoked via revoke approval
+PASS bitemporal: invalidated_at set on revoke
+
+=== 3. E3: supersede は両方承認済み+権限条件でのみ有効 ===
+PASS E3-a candidate(proposed) supersedes approved: rejected  -> rejected: supersedes/overrides: both decisions must be approved
+PASS E3-a' old decision still approved/effective
+PASS E3-b proposes_supersede is accepted but has no effect
+PASS E3-c approved but lower-authority approver supersedes: rejected  -> rejected: supersedes/overrides: approver of the new decision has lower authority than the old one
+PASS E3-d different scope supersedes: rejected  -> rejected: supersedes: scope_project must match (use overrides across scopes)
+PASS E3-e same scope, equal authority, both approved: superseded
+PASS E3-e' old valid_until shortened to day before new.valid_from  -> 2026-04-30
+PASS E3-e'' superseded decision disappears from v_effective only after a legit supersede
+PASS E3-f equal-rank peers in same scope: supersede accepted
+PASS E3-g direct UPDATE status='superseded' without link (agent/raw)  -> rejected: status gate: no supersedes link from an approved decision
+
+=== 4. E9: 単一の優先規則と合成シナリオ ===
+-- overrides 前
+   ('S1-boss', 'S1-senior', 'S1-boss', '1_authority')
+   ('S2-global', 'S2-project', 'S2-project', '2_specificity')
+   ('S3-new', 'S3-old', 'S3-new', '3_recency')
+   ('S4-deptY', 'S4-senior', 'S4-senior', '1_authority')
+   ('S5-x', 'S5-y', None, '5_tie_open_ticket')
+   ('S6-boss', 'S6-owner', 'S6-boss', '1_authority')
+PASS E9 S1-boss vs S1-senior -> winner=S1-boss by 1_authority  -> ('S1-boss', '1_authority')
+PASS E9 S2-global vs S2-project -> winner=S2-project by 2_specificity  -> ('S2-project', '2_specificity')
+PASS E9 S3-new vs S3-old -> winner=S3-new by 3_recency  -> ('S3-new', '3_recency')
+PASS E9 S4-deptY vs S4-senior -> winner=S4-senior by 1_authority  -> ('S4-senior', '1_authority')
+PASS E9 S5-x vs S5-y -> winner=None by 5_tie_open_ticket  -> (None, '5_tie_open_ticket')
+PASS E9 S6-boss vs S6-owner -> winner=S6-boss by 1_authority  -> ('S6-boss', '1_authority')
+-- S6: 承認済み overrides (S6-owner が S6-boss に優先) を、上位権限 boss-a が承認した判断として追加
+PASS overrides from lower-authority approver (senior-b 60 vs boss-a 90) rejected  -> rejected: supersedes/overrides: approver of the new decision has lower authority than the old one
+   (S6-owner の承認者は boss-a で rank90。S6-boss の承認者も 90 なので overrides は許可される)
+   overrides inserted
+PASS E9 S6 explicit overrides -> S6-owner by 0_overrides  -> ('S6-owner', '0_overrides')
+-- 決まらない場合 (S5): 矛盾チケットを開き、動作が proceed → proceed_with_assumption に下がる
+   before={'S5-x': 'proceed', 'S5-y': 'proceed'}  after={'S5-x': 'proceed_with_assumption', 'S5-y': 'proceed_with_assumption'}
+PASS E9 tie: ticket opened (agent connection may open tickets)
+PASS E9 tie: both parties drop to proceed_with_assumption
+PASS E9 tie ticket cannot be resolved by flipping state  -> rejected: ticket can only be resolved by an approved decision that yields a winner
+PASS E9 tie resolved by new approved decisions (boss supersedes both): x,y superseded
+
+-- v_agent_action (単一の動作規則) 一覧
+   ('S1-boss', 'follow', 'two_way', 0.8, 0.7, 0, 'proceed')
+   ('S1-senior', 'follow', 'two_way', 0.95, 0.7, 0, 'overridden')
+   ('S2-global', 'follow', 'two_way', 0.8, 0.7, 0, 'overridden')
+   ('S2-project', 'follow', 'two_way', 0.8, 0.7, 0, 'proceed')
+   ('S3-new', 'follow', 'two_way', 0.7, 0.7, 0, 'proceed')
+   ('S3-old', 'follow', 'two_way', 0.9, 0.7, 0, 'overridden')
+   ('S4-deptY', 'follow', 'two_way', 0.9, 0.7, 0, 'overridden')
+   ('S4-senior', 'follow', 'two_way', 0.9, 0.7, 0, 'proceed')
+   ('S5-z', 'follow', 'two_way', 0.9, 0.7, 0, 'proceed')
+   ('S6-boss', 'follow', 'two_way', 0.9, 0.7, 0, 'overridden')
+   ('S6-low', 'follow', 'two_way', 0.9, 0.7, 0, 'proceed')
+   ('S6-ovr', 'follow', 'two_way', 0.9, 0.7, 0, 'proceed')
+   ('S6-owner', 'follow', 'two_way', 0.9, 0.7, 0, 'proceed')
+PASS action: one_way -> park_task
+PASS action: human_only class -> escalate
+PASS action: low confidence -> proceed_with_assumption
+
+=== 5. 有効性 (v_effective) / bitemporal / 質問キュー / 評価 ===
+PASS v_effective excludes candidate / future / expired(unswept) / superseded
+   bitemporal as-of (valid=2026-02-01, known<=2026-11-17), first rows: [('AM-human',), ('AM-low',), ('AM-onew',)]
+PASS bitemporal query returns the superseded DR-0100 as valid on 2026-02-01
+   v_queue_due: [(1, 'continue_and_renotify', 'senior', 'owner')]
+PASS queue: expired item is routed to escalates_to(senior->owner)
+PASS queue: agent cannot answer  -> rejected: not authorized
+PASS queue: non-human answerer rejected even on a raw writer  -> rejected: queue answers must come from a human principal
+PASS queue: human answer accepted
+PASS v_blast_radius lists decisions backed by the revoked source and the AI decision that used one  -> (10, 1)
+   v_agreement: [('default', 'full_memory', 2, 1.0, 1.0), ('default', 'no_memory', 2, 0.5, 1.0)]
+PASS FTS5 trigram (external content) finds Japanese phrase >=3 chars  -> [('FTS-1',)]
+
+=== 6. 既知の限界の実演 (E2 の境界条件) ===
+PASS agent connection (authorizer) denies: DROP TRIGGER trg_ap_proof  -> rejected: not authorized
+PASS agent connection (authorizer) denies: DELETE FROM status_transition  -> rejected: not authorized
+PASS agent connection (authorizer) denies: INSERT INTO authority_grant VALUES ('agent-1','global',99)  -> rejected: not authorized
+PASS agent connection (authorizer) denies: UPDATE principal SET kind='human' WHERE principal_id='agent-1'  -> rejected: not authorized
+LIMIT (by design, not a PASS): a writer allowed to change the schema can DROP the guard triggers and forge an approval. LIM-1 status in the COPY = approved
+   -> guard = (1) the agent only gets the authorizer-restricted connection, (2) the DB file is not writable by the agent process, (3) MAC key and signing keys stay outside the agent.
+PASS original DB unaffected by the copy's tampering
+
+=== 結果 ===
+FAILED: 0  []

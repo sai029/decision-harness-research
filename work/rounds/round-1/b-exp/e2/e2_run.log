@@ -1,0 +1,17 @@
+PASS 1 agent INSERT decision_candidate status=confirmed, approver=ken (INSERT path) -> must be rejected -> FAIL(IntegrityError: confirmed cannot be inserted directly; insert as hypothesis, attach evidence, then confirm)
+PASS 2 agent UPDATE to confirmed with approver=ken, no signed confirmation row -> must be rejected -> FAIL(IntegrityError: confirmed requires matching signed confirmation)
+PASS 2b agent INSERT forged confirmation row, no verifier fn -> must be rejected -> FAIL(OperationalError: no such function: verify_confirmation)
+PASS 3 agent registers its own always-1 verifier and forges D2 (DB-level defense bypassed; expected to SUCCEED = known limit) -> OK
+   verify_chain: verified= [] forged= ['D2']
+PASS 4 out-of-band verify_chain flags D2 as forged and does not count it as confirmed
+   verify_chain: verified= ['D3'] forged= ['D2']
+PASS 5 legit confirm via approve.py is verified (D3), D2 stays forged
+PASS 6 replay D3 signature onto D4 (real verifier) -> must be rejected -> FAIL(IntegrityError: invalid human signature)
+PASS 7 unregistered approver id (real verifier) -> must be rejected -> FAIL(IntegrityError: invalid human signature)
+PASS 8 edit decision text of confirmed D3 -> must be rejected -> FAIL(IntegrityError: confirmed rows are frozen)
+PASS 9 downgrade confirmed D3 to hypothesis -> must be rejected -> FAIL(IntegrityError: confirmed can only become stale)
+PASS 10 agent INSERT of hypothesis row -> allowed -> OK
+PASS 11 agent read-only connection INSERT -> must be rejected -> FAIL(OperationalError: attempt to write a readonly database)
+   approve.py stderr tail: sqlite3.IntegrityError: confirmed requires verified evidence
+PASS 12 legit signature but no verified evidence (H1) -> must be rejected -> FAIL(RuntimeError: approve.py failed)
+ALL EXPECTATIONS MET 13/13

@@ -1,0 +1,15 @@
+'削除' trigram= [] unicode61= [2]
+'本番データの削除' trigram= [2] unicode61= []
+'公開' trigram= [] unicode61= [1]
+'承認' trigram= [] unicode61= [1]
+'予算' trigram= [] unicode61= [4]
+'ログ' trigram= [] unicode61= [3]
+'release' trigram= [1] unicode61= [1]
+'snake_case' trigram= [5] unicode61= []
+'JSON' trigram= [3] unicode61= []
+LIKE 予算 -> ['D-004']
+tag 削除 -> ['D-002']
+"リトライ" 20k rows avg ms 13.672310000038124 5
+"移行は" 20k rows avg ms 7.689054999718792 5
+"権限は認証" 20k rows avg ms 1.3028850000409875 5
+sqlite 3.39.4

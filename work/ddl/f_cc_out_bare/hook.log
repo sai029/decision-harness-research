@@ -1,0 +1,2 @@
+{"hook_event_name": "PreToolUse", "tool_name": "Bash", "tool_input": {"command": "git push origin main 2>&1; echo \"exit=$?\"; printf 'task-b-done\\n' > notes.txt; cat notes.txt"}, "session_id": "a085c5fa-7cf0-4704-ba4a-5d3c09c79d7d", "agent_id": null, "agent_type": null}
+{"hook_event_name": "PreToolUse", "tool_name": "Bash", "tool_input": {"command": "printf 'task-b-done\\n' > notes.txt; cat notes.txt"}, "session_id": "a085c5fa-7cf0-4704-ba4a-5d3c09c79d7d", "agent_id": null, "agent_type": null}

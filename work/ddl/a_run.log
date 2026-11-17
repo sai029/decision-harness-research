@@ -1,0 +1,21 @@
+sqlite 3.39.4
+DDL OK
+seed OK
+
+--- 原版の5検証 ---
+rejected: edit accepted text -> accepted decision is immutable: write a superseding record
+rejected: accept hypothesis w/o approval -> CHECK constraint failed: status <> 'accepted' OR (approved_by IS NOT NULL AND approved_at IS NOT NULL AND epistemic='confirmed')
+rejected: one_way with follow -> CHECK constraint failed: reversibility <> 'one_way' OR agent_mode IN ('ask_async','human_only')
+rejected: rejected option w/o reason -> CHECK constraint failed: chosen = 1 OR why_not IS NOT NULL
+rejected: card too long -> CHECK constraint failed: length(card) <= 300
+
+--- E2 の再現: approved_by は自由文字列 ---
+accepted: INSERT status='accepted' with forged approved_by='anyone' (agent writes it)
+   DR-0003 status=accepted approved_by=anyone
+   v_effective に出る: ['DR-0001', 'DR-0003']
+
+--- E3 の再現: proposed が accepted を失効させる ---
+   DR-0001 status=superseded (DR-0004 は proposed のまま: proposed)
+   v_effective: []  <- 承認済み判断が無言で消える
+
+結論: 原版 DDL は E2/E3 の指摘どおりに破れる。修正版は unified_schema.sql / unified_run.log。

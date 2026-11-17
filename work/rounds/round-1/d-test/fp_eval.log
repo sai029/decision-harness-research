@@ -1,0 +1,27 @@
+n: literal-positive=84 paraphrase-positive=24 neg_dev=24 neg_heldout=15 neg_clean=45
+janome tokenization samples: {'ログイン': ['ログイン'], 'カタログ': ['カタログ'], 'ブログ': ['ブログ'], '公開鍵': ['公開', '鍵'], '本番データ': ['本番', 'データ'], '削除': ['削除'], '暗号化': ['暗号', '化'], '承認欲求': ['承認', '欲求'], '通知表': ['通知', '表'], '契約社員': ['契約', '社員']}
+method                                          recall(literal)  recall(paraphrase)   FP dev  FP heldout  FP clean
+M5 guard AND janome-aligned                     84/84 =1.00       0/24 =0.00        0/24     6/15 =0.40    0/45
+M1 substring                                    84/84 =1.00       0/24 =0.00       24/24    15/15 =1.00    0/45
+M2 substring+guard(dev-derived)                 84/84 =1.00       0/24 =0.00        3/24    15/15 =1.00    0/45
+M3 janome token-seq                             84/84 =1.00       0/24 =0.00       15/24     6/15 =0.40    0/45
+M4 substring aligned to janome boundaries       84/84 =1.00       0/24 =0.00       15/24     6/15 =0.40    0/45
+
+held-out false fires under M2 (guard from dev only):
+   ログ <- カタログの件を確認して
+   ログ <- カタログを実行する前に方針を確認したい
+   ログ <- 今日はカタログに関するタスクを進めて
+   ログ <- ダイアログの件を確認して
+   ログ <- ダイアログを実行する前に方針を確認したい
+   ログ <- 今日はダイアログに関するタスクを進めて
+   公開 <- 非公開フォルダの件を確認して
+   公開 <- 非公開フォルダを実行する前に方針を確認したい
+   公開 <- 今日は非公開フォルダに関するタスクを進めて
+   削除 <- 削除線の件を確認して
+   削除 <- 削除線を実行する前に方針を確認したい
+   削除 <- 今日は削除線に関するタスクを進めて
+   命名 <- 命名権の件を確認して
+   命名 <- 命名権を実行する前に方針を確認したい
+   命名 <- 今日は命名権に関するタスクを進めて
+
+literal-positive misses under M3 (tokenizer split disagreement):

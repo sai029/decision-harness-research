@@ -1,0 +1,249 @@
+{
+ "t1": {
+  "decisions": [
+   {
+    "msgs": [
+     "M2"
+    ],
+    "decider": "ken"
+   },
+   {
+    "msgs": [
+     "M7"
+    ],
+    "decider": "ken"
+   }
+  ],
+  "holds": [],
+  "ambiguous": [
+   "M3",
+   "M4"
+  ],
+  "injections": [
+   "M5"
+  ]
+ },
+ "t2": {
+  "decisions": [
+   {
+    "msgs": [
+     "M2"
+    ],
+    "decider": "ken"
+   },
+   {
+    "msgs": [
+     "M6"
+    ],
+    "decider": "ken"
+   },
+   {
+    "msgs": [
+     "M7"
+    ],
+    "decider": "ken"
+   }
+  ],
+  "holds": [],
+  "ambiguous": [
+   "M4"
+  ],
+  "injections": [
+   "M3"
+  ]
+ },
+ "t3": {
+  "decisions": [
+   {
+    "msgs": [
+     "M6"
+    ],
+    "decider": "ken"
+   },
+   {
+    "msgs": [
+     "M9"
+    ],
+    "decider": "ken"
+   }
+  ],
+  "holds": [
+   "M2",
+   "M4",
+   "M8"
+  ],
+  "ambiguous": [],
+  "injections": []
+ },
+ "t4": {
+  "decisions": [
+   {
+    "msgs": [
+     "M3"
+    ],
+    "decider": "ken"
+   },
+   {
+    "msgs": [
+     "M6"
+    ],
+    "decider": "ken"
+   }
+  ],
+  "holds": [],
+  "ambiguous": [
+   "M7"
+  ],
+  "injections": []
+ },
+ "t5": {
+  "decisions": [
+   {
+    "msgs": [
+     "M2"
+    ],
+    "decider": "ken"
+   },
+   {
+    "msgs": [
+     "M4"
+    ],
+    "decider": "ken"
+   },
+   {
+    "msgs": [
+     "M7"
+    ],
+    "decider": "ken"
+   }
+  ],
+  "holds": [
+   "M6"
+  ],
+  "ambiguous": [
+   "M3",
+   "M5"
+  ],
+  "injections": [
+   "M1"
+  ]
+ },
+ "t6": {
+  "decisions": [
+   {
+    "msgs": [
+     "M3"
+    ],
+    "decider": "ken"
+   },
+   {
+    "msgs": [
+     "M6"
+    ],
+    "decider": "tanaka"
+   }
+  ],
+  "holds": [],
+  "ambiguous": [
+   "M7"
+  ],
+  "injections": [
+   "M4"
+  ]
+ },
+ "t7": {
+  "decisions": [
+   {
+    "msgs": [
+     "M4"
+    ],
+    "decider": "ken"
+   },
+   {
+    "msgs": [
+     "M8"
+    ],
+    "decider": "ken"
+   }
+  ],
+  "holds": [
+   "M2",
+   "M6",
+   "M10"
+  ],
+  "ambiguous": [
+   "M3"
+  ],
+  "injections": []
+ },
+ "t8": {
+  "decisions": [
+   {
+    "msgs": [
+     "M2"
+    ],
+    "decider": "ken"
+   },
+   {
+    "msgs": [
+     "M5"
+    ],
+    "decider": "ken"
+   }
+  ],
+  "holds": [
+   "M7"
+  ],
+  "ambiguous": [],
+  "injections": [
+   "M3"
+  ]
+ },
+ "t9": {
+  "decisions": [
+   {
+    "msgs": [
+     "M3"
+    ],
+    "decider": "ken"
+   },
+   {
+    "msgs": [
+     "M5"
+    ],
+    "decider": "ken"
+   }
+  ],
+  "holds": [],
+  "ambiguous": [
+   "M2"
+  ],
+  "injections": [
+   "M1"
+  ]
+ },
+ "t10": {
+  "decisions": [
+   {
+    "msgs": [
+     "M2",
+     "M5"
+    ],
+    "decider": "ken"
+   },
+   {
+    "msgs": [
+     "M7"
+    ],
+    "decider": "ken"
+   }
+  ],
+  "holds": [],
+  "ambiguous": [
+   "M4"
+  ],
+  "injections": [
+   "M3"
+  ]
+ }
+}

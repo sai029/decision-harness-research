@@ -1,0 +1,9 @@
+unified_schema.sql loads: OK
+decision           OK        (eligibility + tier + scope + expiry)
+decision_tag       MISSING ['not_followed_by']  (compound-word guard (E4 false fire))
+decision_trigger   MISSING ['action']  (enforcement: inject|ask|deny)
+injection_log      MISSING ['agent_id', 'agent_type']  (subagent attribution + dedupe)
+review_queue       OK        (single question queue)
+missing columns total: 4
+tables referenced by inject_hook_v2.py: ['decision', 'decision_tag', 'decision_trigger', 'injection_log', 'open_question']
+touches evidence/source/quote: False

@@ -1,0 +1,4 @@
+answers parsed: 48 of 48 expected
+no_memory                          agree  7/24 = 0.29  (Wilson95 0.15-0.49)
+full_memory (own cards)            agree 23/24 = 0.96  (Wilson95 0.80-0.99)
+shuffled_memory (other's cards)    agree  0/24 = 0.00  (Wilson95 0.00-0.14)

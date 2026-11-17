@@ -1,0 +1,15 @@
+[PASS] zero-error n (alpha=0.10, 単一検定) = 29  got 29
+[PASS] zero-error n (alpha=0.05, 単一検定) = 59  got 59
+  格子 11 点の Bonferroni 補正後(delta/m): 誤り0件で alpha=0.10 に必要な n = 52, alpha=0.05 -> 106
+[PASS] cp_upper(1,20) ~= 0.2161 (既知値)  got 0.2161
+  (scipy 不在のため照合省略) ModuleNotFoundError
+[PASS] n=20 では自律化しない (threshold=None)  (None, 0, 0)
+  n=600 (alpha=0.10): threshold=0.9 n_above=216 errors=10
+[PASS] 選ばれた閾値の領域で真の誤り率 > alpha となる割合が 5% 以下 (合成・300反復)  selected 237/300, violations 0
+[PASS] 集計出力が export_guard を通る (数値のみ)  
+  agreement: {'no_memory': 0.525, 'rule_default': 0.5, 'shuffled_memory': 0.25, 'full_memory': 0.925} ceiling: 0.9 net_gain: 0.4 cal: {'n': 200, 'alpha': 0.1, 'threshold': 1.0, 'autonomy_enabled': False, 'n_above': 0, 'errors_above': 0, 'zero_error_n_needed': 52}
+[PASS] shuffled_memory は full_memory より低い (合成で腕が機能)  
+[PASS] 自由文字列(判断本文の漏洩)は export_guard が拒否  export_guard: unknown key $.classes.c_syn.note
+[PASS] 未知キーは export_guard が拒否  export_guard: unknown key $.classes.c_syn.arms.full_memory.example
+[PASS] n<5 のセルは suppressed  
+SELFTEST OK

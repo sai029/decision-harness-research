@@ -1,0 +1,96 @@
+sqlite 3.39.4
+
+=== Part A: f_test.sql ===
+[PASS] S00 固定データ(人・scope・権限・クラス・規約)  -> accepted
+[PASS] T01 規約 allowed なのに証拠URL/確認日が無い  -> rejected: CHECK constraint failed: ai_processing = 'unverified' OR (checked_at IS NOT NULL AND evidence_url IS NOT NULL)
+[PASS] T02 A2 クラスは確信度で解除できない(min_confidence<1)  -> rejected: CHECK constraint failed: authority <> 'A2_human_only' OR min_confidence = 1
+[PASS] T03 規約が unverified の Slack ソースは full で取り込めない  -> rejected: service terms not verified as allowed for AI processing
+[PASS] T04 restricted(GitHub PR) も法務確認が済むまでは取り込み不可  -> rejected: service terms not verified as allowed for AI processing
+[PASS] T05 自前 repo_docs + 同意あり + ローカル処理 は full で取り込める(source 1)  -> accepted
+[PASS] T06 外部LLMで処理するのに外部LLM同意が無い(consent 1)  -> rejected: full handling needs active consent (and external-LLM consent if processor=external_llm)
+[PASS] T07 外部LLM同意のある consent 2 なら external_llm でも取り込める(source 2)  -> accepted
+[PASS] T08 同意が無いソースを匿名化だけで取り込むには、再識別リスクの人手確認が要る  -> rejected: anonymized_only needs a human re-identification review
+[PASS] T09 人手確認つきの anonymized_only は取り込める(source 3)  -> accepted
+[PASS] T10 同意の無い Slack ソースは既定で excluded として台帳にだけ残る(source 4)  -> accepted
+[PASS] T11 候補エントリ 1 (lead-001 の判断、proj-x)  -> accepted
+[PASS] T12 INSERT で status=approved を直接指定する経路を拒否  -> rejected: entries must be inserted as candidate
+[PASS] T13 署名付き承認なしに UPDATE で approved にする経路を拒否  -> rejected: approve: no signed approval for current content/epoch
+[PASS] T14 candidate から expired への不正な遷移  -> rejected: illegal status transition
+[PASS] T15 excluded ソースは証拠にできない  -> rejected: evidence: source excluded or revoked
+[PASS] T16 anonymized_only ソースは名前付き判断者に紐づけられない  -> rejected: evidence: anonymized_only source cannot be tied to a named decider
+[PASS] T17 通常の証拠(source 1)  -> accepted
+[PASS] T18 匿名の候補エントリ 2(判断者なし)に anonymized_only ソースを紐づけられる  -> accepted
+[PASS] T19 A2 クラスで proceed を申告  -> rejected: action less conservative than the policy table allows
+[PASS] T20 R2 で確信度が閾値以上のとき park_task(表は escalate)  -> rejected: action less conservative than the policy table allows
+[PASS] T21 R0 で確信度 < 閾値なのに proceed  -> rejected: action less conservative than the policy table allows
+[PASS] T22 proceed_with_assumption で巻き戻し手順が無い  -> rejected: CHECK constraint failed: action <> 'proceed_with_assumption' OR (default_taken IS NOT NULL AND rollback_plan IS NOT NULL)
+[PASS] T23 R0 低確信 → proceed_with_assumption。review_queue 行がトリガで作られる(ai_decision 1)  -> accepted
+[PASS] T24 R2 低確信は park_task、A2 は escalate(ai_decision 2,3)  -> accepted
+[PASS] T25 高確信 R0 は proceed(キュー行は作られない)(ai_decision 4)  -> accepted
+review_queue rows created by trigger: [(1, 1, 'c_dep', 'lead-001', '2026-04-01T00:00:00Z', '2026-04-02T00:00:00Z', 'open'), (2, 2, 'c_deploy', 'lead-001', '2026-04-01T00:00:00Z', '2026-04-02T00:00:00Z', 'open'), (3, 3, 'c_budget', 'lead-001', '2026-04-01T00:00:00Z', '2026-04-02T00:00:00Z', 'open')]
+[PASS] A2/R2/R0 の質問だけがキューに入り、proceed は入らない  -> [(1, 1, 'c_dep', 'lead-001', '2026-04-01T00:00:00Z', '2026-04-02T00:00:00Z', 'open'), (2, 2, 'c_deploy', 'lead-001', '2026-04-01T00:00:00Z', '2026-04-02T00:00:00Z', 'open'), (3, 3, 'c_budget', 'lead-001', '2026-04-01T00:00:00Z', '2026-04-02T00:00:00Z', 'open')]
+[PASS] キュー行の責任者は scope の近い責任者(lead-001)
+
+=== Part B: E2 承認の偽造試験 ===
+[PASS] B1 lead-001 の署名付き承認で entry 1 が approved
+[PASS] B2 approved_by 偽造 (他人の鍵で署名) の INSERT を拒否  -> rejected: approval: bad signature
+[PASS] B3 署名が空の承認 INSERT を拒否  -> rejected: approval: bad signature
+[PASS] B4 approver 表に無い主体の承認 INSERT を拒否  -> rejected: approval: approver is inactive or has no authority on this scope
+[PASS] B5 UPDATE status='approved' (承認行なし) を拒否  -> rejected: approve: no signed approval for current content/epoch
+[PASS] B6 署名後に内容を差し替えた承認 (旧ハッシュ) を拒否  -> rejected: approval: entry hash/epoch mismatch
+[PASS] B7 proj-y に権限の無い senior-001 の署名を拒否 (署名自体は本物)  -> rejected: approval: approver is inactive or has no authority on this scope
+[PASS] B8 作成者(created_by)による自己承認を拒否  -> rejected: approval: creator cannot approve own entry
+[PASS] B9 approved エントリの内容変更を拒否  -> rejected: approved entry is immutable
+[PASS] B10a 隔離で epoch が上がる  -> epoch=1
+[PASS] B10b 隔離前の署名の再利用(リプレイ)で approved に戻せない  -> rejected: approve: no signed approval for current content/epoch
+[PASS] B11 検証関数の無い接続での承認 INSERT は fail closed  -> rejected: no such function: entry_hash
+B12 attacked DB: DB 上の有効集合=[1, 2, 4]  署名再検証後の集合=[1]
+[PASS] B12 DB 内部を偽造しても、読み出し側の署名再検証で偽造エントリ(2,4)が除外される  -> db=[1, 2, 4] verified=[1]
+[PASS] B13a candidate が supersedes_id を持っても旧 entry 1 は approved のまま
+[PASS] B13b 置換側が未承認のまま旧エントリを superseded にする UPDATE を拒否  -> rejected: supersede only by an approved entry
+[PASS] B13c 置換側が署名付きで approved になると旧 entry 1 が superseded
+
+=== Part E: E7 質問キュー(単一仕様)と期限切れ ===
+v_queue_unowned: [(4, 'global', None)]
+[PASS] 責任者が解決できない scope(global)のキューは v_queue_unowned に出る
+after sweep @2026-04-02T01:00: {1: ('c_dep', 'defaulted', None, 0, '2026-04-02T00:00:00Z'), 2: ('c_deploy', 'open', 'boss-001', 1, '2026-04-02T13:00:00Z'), 3: ('c_budget', 'open', 'boss-001', 1, '2026-04-02T13:00:00Z'), 4: ('c_dep', 'defaulted', None, 0, '2026-04-02T00:00:00Z')}
+[PASS] E7a R0 は期限切れで既定が確定(defaulted)
+[PASS] E7b R2 (park) は駐車のまま open、1段上の boss-001 へエスカレーションし再通知  -> ('c_deploy', 'open', 'boss-001', 1, '2026-04-02T13:00:00Z')
+[PASS] E7c A2 (escalate) も open のまま再通知
+[PASS] E7d 偽造署名(mallory が lead-001 を名乗る)の回答を拒否  -> rejected: answer: bad signature
+[PASS] E7e 署名なしの回答(エージェントが status を answered に)を拒否  -> rejected: answer: bad signature
+[PASS] E7f 責任者でない senior-001 の(本物の署名の)回答を拒否  -> rejected: answer: answerer is not a responsible approver for this scope
+[PASS] E7g エスカレーション先 boss-001 の署名付き回答が通る(R2 駐車タスクが解除される)
+late answer on defaulted R0: outcome=overturned, impacted artifacts=[(1, 't-r0', 'lockfile-commit-abc')]
+[PASS] E7h 確定後の遅い回答が既定と違えば overturned、依存成果物が列挙される
+v_queue_answers_for_agent: [(1, 't-r0', 'answered', 'ranges', 'pin_exact', 'overturned'), (2, 't-r2', 'answered', 'deploy_after_review', None, 'unreviewed'), (4, 't-glob', 'defaulted', None, 'plain', 'unreviewed')]
+
+=== Part C: E10 同意の撤回 ===
+entries before: [(1, 'superseded'), (2, 'candidate'), (3, 'candidate'), (4, 'candidate'), (5, 'candidate'), (6, 'approved')]
+entries after : [(1, 'superseded'), (2, 'candidate'), (3, 'revoked'), (4, 'revoked'), (5, 'revoked'), (6, 'revoked')]
+source 1: (1, 'excluded', '2026-04-10T00:00:00Z')
+v_blast_radius(source 1): [(1, 1, 1, 't-r0'), (1, 3, None, None), (1, 4, None, None), (1, 5, None, None), (1, 6, 4, 't-ok')]
+[PASS] C1 撤回で source 1 が excluded+revoked
+[PASS] C2 証拠が全て失効したエントリ(5,6)は revoked、他ソース由来の匿名エントリ 2 は残る
+[PASS] C3 影響範囲ビューが失効ソース→記録→AI判断を列挙
+[PASS] C4 撤回済み同意のソースを再び full にできない  -> rejected: full handling needs active consent (and external-LLM consent if processor=external_llm)
+
+=== Part D: E9 優先規則の合成シナリオ ===
+D1 pair=[(11, 12, 12, 'P4_authority_in_scope')] effective(proj-x)=[12]
+[PASS] D1 上司 vs 先輩(同一scope): 権限が高い上司が勝つ (P4)
+D2 pair=[(21, 22, 22, 'P2_scope_depth')] effective(proj-x)=[22] effective(proj-y)=[21]
+[PASS] D2 global default vs project default: proj-x では具体的な方(22)、proj-y では global(21)が有効 (P2、scope別評価)
+[PASS] D3 global mandatory は project default に勝つ (P1)  -> [(31, 32, 31, 'P1_mandatory')] [31]
+[PASS] D4 同一判断者の新旧: 新しい方が勝つ (P3)  -> [(41, 42, 42, 'P3_newer_same_decider')]
+D5 pair=[(51, 52, None, 'P5_unresolved')] tickets=[(1, 51, 52, 'P5_unresolved', 'open')] effective(proj-x)=[] effective(proj-y)=[]
+[PASS] D5 権限が比較できない先輩同士は winner=NULL → 矛盾チケットが開き、両方とも注入から外れる
+[PASS] D5b 未解決の矛盾があるトピックでは confidence 0.95 でも proceed を禁止  -> rejected: action less conservative than the policy table allows
+[PASS] D5c 同じ条件で proceed_with_assumption + キュー は通る
+[PASS] D5d 別トピックの proceed は影響を受けない
+[PASS] D5e 片方を revoke すると矛盾チケットが resolved になり、残り(51)が有効に戻る  -> ('resolved', 'entry 52 became revoked') [51]
+[PASS] D6 同位の別判断者(同一scope)は決めずに矛盾チケット (P5)
+[PASS] D7 兄弟 scope の同一トピックは競合として扱わない
+[PASS] D8 candidate(82) が新しくても approved(81) は有効のまま (pair は approved 同士だけ)
+[PASS] 署名再検証後も proj-x の有効集合が DB の集合と一致(正規データでは差が出ない)  -> [12, 22, 31, 42, 51, 71, 81] vs [12, 22, 31, 42, 51, 71, 81]
+
+TOTAL: PASS=70 FAIL=0

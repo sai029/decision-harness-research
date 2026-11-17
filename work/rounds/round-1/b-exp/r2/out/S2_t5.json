@@ -1,0 +1,1 @@
+[{"id":"D1","class":"decision","reason":"kenが指数バックオフ採用を指示"},{"id":"D2","class":"decision","reason":"ジッタ追加と30秒上限で確定"},{"id":"D3","class":"deferral","reason":"マージ見送りで再確認を先送り"},{"id":"D4","class":"decision","reason":"メールのマスクを必須と確定"}]

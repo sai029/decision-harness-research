@@ -1,0 +1,9 @@
+{
+  "hooks": {
+    "SessionStart": [{"matcher": "startup|resume|clear|compact",
+      "hooks": [{"type": "command", "command": "python", "args": ["-I","-X","utf8","${CLAUDE_PROJECT_DIR}/.claude/hooks/inject_hook_v2.py"], "timeout": 5}]}],
+    "UserPromptSubmit": [{"hooks": [{"type": "command", "command": "python", "args": ["-I","-X","utf8","${CLAUDE_PROJECT_DIR}/.claude/hooks/inject_hook_v2.py"], "timeout": 5}]}],
+    "PreToolUse": [{"matcher": "Bash|PowerShell|Write|Edit",
+      "hooks": [{"type": "command", "command": "python", "args": ["-I","-X","utf8","${CLAUDE_PROJECT_DIR}/.claude/hooks/inject_hook_v2.py"], "timeout": 5}]}]
+  }
+}

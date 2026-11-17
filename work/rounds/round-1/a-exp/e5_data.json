@@ -1,0 +1,226 @@
+{
+ "cases": [
+  {
+   "id": "deploy-3",
+   "domain": "deploy",
+   "scenario": "a pagination limit change in the search api",
+   "opts": [
+    "soak in staging for a full day first",
+    "push straight to production with a rollback ready",
+    "canary to ten percent of traffic first"
+   ],
+   "truth": [
+    "A",
+    "B"
+   ]
+  },
+  {
+   "id": "retry-0",
+   "domain": "retry",
+   "scenario": "the log compactor failed on a lock wait",
+   "opts": [
+    "retry with exponential backoff up to five times",
+    "fail immediately and alert the owner",
+    "retry three times at a fixed interval"
+   ],
+   "truth": [
+    "B",
+    "A"
+   ]
+  },
+  {
+   "id": "review-7",
+   "domain": "review",
+   "scenario": "a patch to the session handling code",
+   "opts": [
+    "require one approver",
+    "merge yourself and ask for review afterwards",
+    "require two approvers"
+   ],
+   "truth": [
+    "B",
+    "C"
+   ]
+  },
+  {
+   "id": "dependency-5",
+   "domain": "dependency",
+   "scenario": "the yaml loader used by configuration",
+   "opts": [
+    "allow compatible minor updates",
+    "track the latest release",
+    "pin the exact version"
+   ],
+   "truth": [
+    "C",
+    "B"
+   ]
+  },
+  {
+   "id": "review-6",
+   "domain": "review",
+   "scenario": "a rename across the admin ui",
+   "opts": [
+    "require one approver",
+    "require two approvers",
+    "merge yourself and ask for review afterwards"
+   ],
+   "truth": [
+    "C",
+    "B"
+   ]
+  },
+  {
+   "id": "retry-1",
+   "domain": "retry",
+   "scenario": "the search reindex job got a gateway timeout",
+   "opts": [
+    "retry with exponential backoff up to five times",
+    "fail immediately and alert the owner",
+    "retry three times at a fixed interval"
+   ],
+   "truth": [
+    "B",
+    "A"
+   ]
+  },
+  {
+   "id": "dependency-4",
+   "domain": "dependency",
+   "scenario": "the queue client used by workers",
+   "opts": [
+    "pin the exact version",
+    "track the latest release",
+    "allow compatible minor updates"
+   ],
+   "truth": [
+    "A",
+    "B"
+   ]
+  },
+  {
+   "id": "deploy-2",
+   "domain": "deploy",
+   "scenario": "a log-level change in the scheduler",
+   "opts": [
+    "soak in staging for a full day first",
+    "canary to ten percent of traffic first",
+    "push straight to production with a rollback ready"
+   ],
+   "truth": [
+    "A",
+    "C"
+   ]
+  },
+  {
+   "id": "incident-9",
+   "domain": "incident",
+   "scenario": "intermittent errors in the mobile api",
+   "opts": [
+    "notify everyone affected immediately",
+    "tell only the service owner first",
+    "wait for the root cause before telling anyone"
+   ],
+   "truth": [
+    "B",
+    "A"
+   ]
+  },
+  {
+   "id": "incident-8",
+   "domain": "incident",
+   "scenario": "a broken search ranking after a deploy",
+   "opts": [
+    "wait for the root cause before telling anyone",
+    "notify everyone affected immediately",
+    "tell only the service owner first"
+   ],
+   "truth": [
+    "C",
+    "B"
+   ]
+  },
+  {
+   "id": "pii-11",
+   "domain": "pii",
+   "scenario": "ip addresses in the abuse detector",
+   "opts": [
+    "store a salted hash of the field",
+    "drop the field from logs entirely",
+    "mask the field in logs"
+   ],
+   "truth": [
+    "A",
+    "C"
+   ]
+  },
+  {
+   "id": "pii-10",
+   "domain": "pii",
+   "scenario": "account numbers in reconciliation logs",
+   "opts": [
+    "store a salted hash of the field",
+    "mask the field in logs",
+    "drop the field from logs entirely"
+   ],
+   "truth": [
+    "A",
+    "B"
+   ]
+  }
+ ],
+ "cards": [
+  [
+   "In the context of the nightly invoice export failed on a timeout, facing the choice [retry three times at a fixed interval / retry with exponential backoff up to five times / fail immediately and alert the owner], D-1 decided for \"fail immediately and alert the owner\", to achieve: silent retries hide real outages.",
+   "In the context of the thumbnail batch job failed with a 503 from storage, facing the choice [retry three times at a fixed interval / retry with exponential backoff up to five times / fail immediately and alert the owner], D-1 decided for \"fail immediately and alert the owner\", to achieve: silent retries hide real outages.",
+   "In the context of the weekly report mailer hit a rate limit, facing the choice [retry three times at a fixed interval / retry with exponential backoff up to five times / fail immediately and alert the owner], D-1 decided for \"fail immediately and alert the owner\", to achieve: silent retries hide real outages.",
+   "In the context of the cache warmer crashed on a connection reset, facing the choice [retry three times at a fixed interval / retry with exponential backoff up to five times / fail immediately and alert the owner], D-1 decided for \"fail immediately and alert the owner\", to achieve: silent retries hide real outages.",
+   "In the context of a feature-flag default change in the checkout service, facing the choice [push straight to production with a rollback ready / canary to ten percent of traffic first / soak in staging for a full day first], D-1 decided for \"soak in staging for a full day first\", to achieve: production surprises cost more than a day.",
+   "In the context of a timeout tweak in the api gateway, facing the choice [push straight to production with a rollback ready / canary to ten percent of traffic first / soak in staging for a full day first], D-1 decided for \"soak in staging for a full day first\", to achieve: production surprises cost more than a day.",
+   "In the context of a new index on the orders table, facing the choice [push straight to production with a rollback ready / canary to ten percent of traffic first / soak in staging for a full day first], D-1 decided for \"soak in staging for a full day first\", to achieve: production surprises cost more than a day.",
+   "In the context of an updated email template in the notifier, facing the choice [push straight to production with a rollback ready / canary to ten percent of traffic first / soak in staging for a full day first], D-1 decided for \"soak in staging for a full day first\", to achieve: production surprises cost more than a day.",
+   "In the context of the json parsing library used by the importer, facing the choice [pin the exact version / allow compatible minor updates / track the latest release], D-1 decided for \"pin the exact version\", to achieve: reproducible builds matter most.",
+   "In the context of the http client used by the notifier, facing the choice [pin the exact version / allow compatible minor updates / track the latest release], D-1 decided for \"pin the exact version\", to achieve: reproducible builds matter most.",
+   "In the context of the date library used by the reports, facing the choice [pin the exact version / allow compatible minor updates / track the latest release], D-1 decided for \"pin the exact version\", to achieve: reproducible builds matter most.",
+   "In the context of the pdf renderer used by invoices, facing the choice [pin the exact version / allow compatible minor updates / track the latest release], D-1 decided for \"pin the exact version\", to achieve: reproducible builds matter most.",
+   "In the context of a refactor of the billing module, facing the choice [require one approver / require two approvers / merge yourself and ask for review afterwards], D-1 decided for \"merge yourself and ask for review afterwards\", to achieve: owners should be trusted and unblocked.",
+   "In the context of a fix to the csv export, facing the choice [require one approver / require two approvers / merge yourself and ask for review afterwards], D-1 decided for \"merge yourself and ask for review afterwards\", to achieve: owners should be trusted and unblocked.",
+   "In the context of an update to the onboarding emails, facing the choice [require one approver / require two approvers / merge yourself and ask for review afterwards], D-1 decided for \"merge yourself and ask for review afterwards\", to achieve: owners should be trusted and unblocked.",
+   "In the context of a change to the retry helper, facing the choice [require one approver / require two approvers / merge yourself and ask for review afterwards], D-1 decided for \"merge yourself and ask for review afterwards\", to achieve: owners should be trusted and unblocked.",
+   "In the context of a partial outage of the file upload service, facing the choice [notify everyone affected immediately / tell only the service owner first / wait for the root cause before telling anyone], D-1 decided for \"tell only the service owner first\", to achieve: avoid panic until the owner has facts.",
+   "In the context of a spike of failed logins, facing the choice [notify everyone affected immediately / tell only the service owner first / wait for the root cause before telling anyone], D-1 decided for \"tell only the service owner first\", to achieve: avoid panic until the owner has facts.",
+   "In the context of stale data on the dashboard, facing the choice [notify everyone affected immediately / tell only the service owner first / wait for the root cause before telling anyone], D-1 decided for \"tell only the service owner first\", to achieve: avoid panic until the owner has facts.",
+   "In the context of delayed payouts for one region, facing the choice [notify everyone affected immediately / tell only the service owner first / wait for the root cause before telling anyone], D-1 decided for \"tell only the service owner first\", to achieve: avoid panic until the owner has facts.",
+   "In the context of customer email addresses in request logs, facing the choice [mask the field in logs / drop the field from logs entirely / store a salted hash of the field], D-1 decided for \"store a salted hash of the field\", to achieve: hashes still allow debugging joins.",
+   "In the context of phone numbers in the sms gateway logs, facing the choice [mask the field in logs / drop the field from logs entirely / store a salted hash of the field], D-1 decided for \"store a salted hash of the field\", to achieve: hashes still allow debugging joins.",
+   "In the context of postal addresses in shipping events, facing the choice [mask the field in logs / drop the field from logs entirely / store a salted hash of the field], D-1 decided for \"store a salted hash of the field\", to achieve: hashes still allow debugging joins.",
+   "In the context of date of birth in the signup audit trail, facing the choice [mask the field in logs / drop the field from logs entirely / store a salted hash of the field], D-1 decided for \"store a salted hash of the field\", to achieve: hashes still allow debugging joins."
+  ],
+  [
+   "In the context of the nightly invoice export failed on a timeout, facing the choice [retry three times at a fixed interval / retry with exponential backoff up to five times / fail immediately and alert the owner], D-2 decided for \"retry with exponential backoff up to five times\", to achieve: transient faults usually clear themselves.",
+   "In the context of the thumbnail batch job failed with a 503 from storage, facing the choice [retry three times at a fixed interval / retry with exponential backoff up to five times / fail immediately and alert the owner], D-2 decided for \"retry with exponential backoff up to five times\", to achieve: transient faults usually clear themselves.",
+   "In the context of the weekly report mailer hit a rate limit, facing the choice [retry three times at a fixed interval / retry with exponential backoff up to five times / fail immediately and alert the owner], D-2 decided for \"retry with exponential backoff up to five times\", to achieve: transient faults usually clear themselves.",
+   "In the context of the cache warmer crashed on a connection reset, facing the choice [retry three times at a fixed interval / retry with exponential backoff up to five times / fail immediately and alert the owner], D-2 decided for \"retry with exponential backoff up to five times\", to achieve: transient faults usually clear themselves.",
+   "In the context of a feature-flag default change in the checkout service, facing the choice [push straight to production with a rollback ready / canary to ten percent of traffic first / soak in staging for a full day first], D-2 decided for \"push straight to production with a rollback ready\", to achieve: small changes should ship and be watched.",
+   "In the context of a timeout tweak in the api gateway, facing the choice [push straight to production with a rollback ready / canary to ten percent of traffic first / soak in staging for a full day first], D-2 decided for \"push straight to production with a rollback ready\", to achieve: small changes should ship and be watched.",
+   "In the context of a new index on the orders table, facing the choice [push straight to production with a rollback ready / canary to ten percent of traffic first / soak in staging for a full day first], D-2 decided for \"push straight to production with a rollback ready\", to achieve: small changes should ship and be watched.",
+   "In the context of an updated email template in the notifier, facing the choice [push straight to production with a rollback ready / canary to ten percent of traffic first / soak in staging for a full day first], D-2 decided for \"push straight to production with a rollback ready\", to achieve: small changes should ship and be watched.",
+   "In the context of the json parsing library used by the importer, facing the choice [pin the exact version / allow compatible minor updates / track the latest release], D-2 decided for \"track the latest release\", to achieve: security fixes arrive in new releases.",
+   "In the context of the http client used by the notifier, facing the choice [pin the exact version / allow compatible minor updates / track the latest release], D-2 decided for \"track the latest release\", to achieve: security fixes arrive in new releases.",
+   "In the context of the date library used by the reports, facing the choice [pin the exact version / allow compatible minor updates / track the latest release], D-2 decided for \"track the latest release\", to achieve: security fixes arrive in new releases.",
+   "In the context of the pdf renderer used by invoices, facing the choice [pin the exact version / allow compatible minor updates / track the latest release], D-2 decided for \"track the latest release\", to achieve: security fixes arrive in new releases.",
+   "In the context of a refactor of the billing module, facing the choice [require one approver / require two approvers / merge yourself and ask for review afterwards], D-2 decided for \"require two approvers\", to achieve: a second pair of eyes catches expensive mistakes.",
+   "In the context of a fix to the csv export, facing the choice [require one approver / require two approvers / merge yourself and ask for review afterwards], D-2 decided for \"require two approvers\", to achieve: a second pair of eyes catches expensive mistakes.",
+   "In the context of an update to the onboarding emails, facing the choice [require one approver / require two approvers / merge yourself and ask for review afterwards], D-2 decided for \"require two approvers\", to achieve: a second pair of eyes catches expensive mistakes.",
+   "In the context of a change to the retry helper, facing the choice [require one approver / require two approvers / merge yourself and ask for review afterwards], D-2 decided for \"require two approvers\", to achieve: a second pair of eyes catches expensive mistakes.",
+   "In the context of a partial outage of the file upload service, facing the choice [notify everyone affected immediately / tell only the service owner first / wait for the root cause before telling anyone], D-2 decided for \"notify everyone affected immediately\", to achieve: people deserve to know as soon as it is known.",
+   "In the context of a spike of failed logins, facing the choice [notify everyone affected immediately / tell only the service owner first / wait for the root cause before telling anyone], D-2 decided for \"notify everyone affected immediately\", to achieve: people deserve to know as soon as it is known.",
+   "In the context of stale data on the dashboard, facing the choice [notify everyone affected immediately / tell only the service owner first / wait for the root cause before telling anyone], D-2 decided for \"notify everyone affected immediately\", to achieve: people deserve to know as soon as it is known.",
+   "In the context of delayed payouts for one region, facing the choice [notify everyone affected immediately / tell only the service owner first / wait for the root cause before telling anyone], D-2 decided for \"notify everyone affected immediately\", to achieve: people deserve to know as soon as it is known.",
+   "In the context of customer email addresses in request logs, facing the choice [mask the field in logs / drop the field from logs entirely / store a salted hash of the field], D-2 decided for \"mask the field in logs\", to achieve: masked values are enough and simplest.",
+   "In the context of phone numbers in the sms gateway logs, facing the choice [mask the field in logs / drop the field from logs entirely / store a salted hash of the field], D-2 decided for \"mask the field in logs\", to achieve: masked values are enough and simplest.",
+   "In the context of postal addresses in shipping events, facing the choice [mask the field in logs / drop the field from logs entirely / store a salted hash of the field], D-2 decided for \"mask the field in logs\", to achieve: masked values are enough and simplest.",
+   "In the context of date of birth in the signup audit trail, facing the choice [mask the field in logs / drop the field from logs entirely / store a salted hash of the field], D-2 decided for \"mask the field in logs\", to achieve: masked values are enough and simplest."
+  ]
+ ]
+}
